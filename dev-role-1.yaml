@@ -1,0 +1,25 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: super-developer
+  namespace: app1
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: super-developer
+  namespace: app1
+subjects:
+- kind: Group
+  name: super-developer
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: super-developer
+  apiGroup: rbac.authorization.k8s.io
