@@ -1,19 +1,19 @@
 #!/bin/sh
 
 # This install script is intended to download and install the latest available
-# release of the dep dependency manager for Golang.
+# release of the EKSUSER EKSUSERendency manager for Golang.
 #
 # It attempts to identify the current platform and an error will be thrown if
 # the platform is not supported.
 #
 # Environment variables:
 # - INSTALL_DIRECTORY (optional): defaults to $GOPATH/bin
-# - DEP_RELEASE_TAG (optional): defaults to fetching the latest release
-# - DEP_OS (optional): use a specific value for OS (mostly for testing)
-# - DEP_ARCH (optional): use a specific value for ARCH (mostly for testing)
+# - EKSUSER_RELEASE_TAG (optional): defaults to fetching the latest release
+# - EKSUSER_OS (optional): use a specific value for OS (mostly for testing)
+# - EKSUSER_ARCH (optional): use a specific value for ARCH (mostly for testing)
 #
 # You can install using this script:
-# $ curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+# $ curl https://raw.githubusercontent.com/prabhatsharma/eksuser/master/install.sh | sh
 
 set -e
 
@@ -86,9 +86,9 @@ findGoBinDirectory() {
 
 initArch() {
     ARCH=$(uname -m)
-    if [ -n "$DEP_ARCH" ]; then
-        echo "Using DEP_ARCH"
-        ARCH="$DEP_ARCH"
+    if [ -n "$EKSUSER_ARCH" ]; then
+        echo "Using EKSUSER_ARCH"
+        ARCH="$EKSUSER_ARCH"
     fi
     case $ARCH in
         amd64) ARCH="amd64";;
@@ -104,9 +104,9 @@ initArch() {
 initOS() {
     OS=$(uname | tr '[:upper:]' '[:lower:]')
     OS_CYGWIN=0
-    if [ -n "$DEP_OS" ]; then
-        echo "Using DEP_OS"
-        OS="$DEP_OS"
+    if [ -n "$EKSUSER_OS" ]; then
+        echo "Using EKSUSER_OS"
+        OS="$EKSUSER_OS"
     fi
     case "$OS" in
         darwin) OS='darwin';;
@@ -138,25 +138,25 @@ if [ "${OS}" != "linux" ] && { [ "${ARCH}" = "ppc64" ] || [ "${ARCH}" = "ppc64le
     # ppc64 and ppc64le are only supported on Linux.
     echo "${OS}-${ARCH} is not supported by this instalation script"
 else
-    BINARY="eksuser-${OS}-${ARCH}"
+    BINARY="eksuser-${OS}-${ARCH}.zip"
 fi
 
 # add .exe if on windows
 if [ "$OS" = "windows" ]; then
-    BINARY="$BINARY.exe"
+    BINARY="eksuser-${OS}-${ARCH}.zip"
 fi
 
-# if DEP_RELEASE_TAG was not provided, assume latest
-if [ -z "$DEP_RELEASE_TAG" ]; then
+# if EKSUSER_RELEASE_TAG was not provided, assume latest
+if [ -z "$EKSUSER_RELEASE_TAG" ]; then
     downloadJSON LATEST_RELEASE "$RELEASES_URL/latest"
-    DEP_RELEASE_TAG=$(echo "${LATEST_RELEASE}" | tr -s '\n' ' ' | sed 's/.*"tag_name":"//' | sed 's/".*//' )
+    EKSUSER_RELEASE_TAG=$(echo "${LATEST_RELEASE}" | tr -s '\n' ' ' | sed 's/.*"tag_name":"//' | sed 's/".*//' )
 fi
-echo "Release Tag = $DEP_RELEASE_TAG"
+echo "Release Tag = $EKSUSER_RELEASE_TAG"
 
 # fetch the real release data to make sure it exists before we attempt a download
-downloadJSON RELEASE_DATA "$RELEASES_URL/tag/$DEP_RELEASE_TAG"
+downloadJSON RELEASE_DATA "$RELEASES_URL/tag/$EKSUSER_RELEASE_TAG"
 
-BINARY_URL="$RELEASES_URL/download/$DEP_RELEASE_TAG/$BINARY"
+BINARY_URL="$RELEASES_URL/download/$EKSUSER_RELEASE_TAG/$BINARY"
 DOWNLOAD_FILE=$(mktemp)
 
 downloadFile "$BINARY_URL" "$DOWNLOAD_FILE"
@@ -164,7 +164,7 @@ downloadFile "$BINARY_URL" "$DOWNLOAD_FILE"
 echo "Setting executable permissions."
 chmod +x "$DOWNLOAD_FILE"
 
-INSTALL_NAME="dep"
+INSTALL_NAME="eksuser"
 
 if [ "$OS" = "windows" ]; then
     INSTALL_NAME="$INSTALL_NAME.exe"

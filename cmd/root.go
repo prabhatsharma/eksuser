@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 Prabhat Sharma <hi.prabhat@gmail.com>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "eksuser",
 	Short: "A brief description of your application",
-	Long: `eksuser can be used to add existing iam users to Amazon EKS.`,
+	Long:  `eksuser can be used to add existing iam users to Amazon EKS.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
