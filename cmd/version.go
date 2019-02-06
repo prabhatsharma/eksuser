@@ -25,7 +25,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version will output the current release information",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("eksuser 0.1")
+		fmt.Println("eksuser 0.1.1")
 	},
 }
 

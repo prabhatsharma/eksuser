@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG=v0.1.0
+TAG=v0.1.1
 
 git tag -a $TAG -m "$TAG release"
 git push origin $TAG
