@@ -3,6 +3,7 @@ package action
 import (
 	"flag"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	yaml "gopkg.in/yaml.v2"
@@ -14,7 +15,7 @@ import (
 	"github.com/prabhatsharma/eksuser/pkg/utils"
 )
 
-// UpdateKubeConfigMap updates the aws-auth configmap that contains EKS users IAM mapping. 
+// UpdateKubeConfigMap updates the aws-auth configmap that contains EKS users IAM mapping.
 // userToActUpon: user to be added or deleted
 // action: valid values for action: add, delete
 func UpdateKubeConfigMap(userToActUpon utils.IamUser, action string) {
@@ -41,7 +42,10 @@ func UpdateKubeConfigMap(userToActUpon utils.IamUser, action string) {
 	// get all the configmaps in kube-system namespace
 	cm, cErr := clientset.CoreV1().ConfigMaps("kube-system").List(metav1.ListOptions{})
 	if cErr != nil {
-		panic(cErr.Error())
+		if cErr.Error() == "Unauthorized" {
+			fmt.Println("Current IAM user is not authorized to read/write kube-system/aws-auth configmap. You need access to kube-system/aws-auth configmap for you to use eksuser.")
+			os.Exit(1)
+		}
 	}
 
 	for _, v := range cm.Items {

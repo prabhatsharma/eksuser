@@ -91,6 +91,15 @@ To update an existing IAM user to EKS:
 ```shell
 $ eksuser update --user=prabhat --group=super-developer
 ```
+
+To delete an existing IAM user to EKS:
+
+```shell
+$ eksuser delete --user=prabhat
+```
+Remember that it does not delete the IAM user from AWS IAM, just the IAM user entry from EKS.
+
+
 ## Generate kubeconfig file
 
 On user's machine who has been added to EKS, they can configure .kube/config file using the following command:
