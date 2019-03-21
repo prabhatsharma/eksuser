@@ -29,14 +29,16 @@ var updateCmd = &cobra.Command{
 	Short: "Update an IAM user in EKS",
 	Long: `Update an IAM user to EKS. Specify compulsory flags --user and --group to which the user will be added. For example:
 	$ eksuser update --user=prabhat --group=system:masters
-	$ eksuser update --user=prabhat --group=developer,ops`,
+	$ eksuser update --user=prabhat --group=developer,ops
+	$ eksuser update --iamgroup=admin --group=system:masters`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		// workaround for https://github.com/spf13/viper/issues/233
-		viper.BindPFlag("user", cmd.Flags().Lookup("user"))
-		viper.BindPFlag("group", cmd.Flags().Lookup("group"))
+		// viper.BindPFlag("user1", cmd.Flags().Lookup("user"))
+		// viper.BindPFlag("group", cmd.Flags().Lookup("group"))
+		// viper.BindPFlag("iamgroup", updateCmd.Flags().Lookup("iamgroup"))
 
-		user := viper.GetString("user")
+		user := viper.GetString("user1")
 
 		if user == "" {
 			fmt.Fprintf(os.Stderr, "Error: user not specified\n")
@@ -62,7 +64,9 @@ func init() {
 
 	updateCmd.Flags().StringP("user", "u", "", "IAM user to be updated in EKS. e.g. prabhat")
 	updateCmd.Flags().StringP("group", "g", "", "kubernetes group(s) to which user will be added. e.g. system:masters")
+	updateCmd.Flags().StringP("iamgroup", "i", "", "IAM group to be added to EKS. e.g. developers")
 
 	viper.BindPFlag("user", updateCmd.Flags().Lookup("user"))
 	viper.BindPFlag("group", updateCmd.Flags().Lookup("group"))
+	viper.BindPFlag("iamgroup", updateCmd.Flags().Lookup("iamgroup"))
 }

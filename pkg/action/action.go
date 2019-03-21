@@ -1,7 +1,6 @@
 package action
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -19,16 +18,14 @@ import (
 // userToActUpon: user to be added or deleted
 // action: valid values for action: add, delete
 func UpdateKubeConfigMap(userToActUpon utils.IamUser, action string) {
-	var kubeconfig *string
+
+	var kubeConfigPath string
 	if home := utils.HomeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		kubeConfigPath = filepath.Join(home, ".kube", "config")
 	}
-	flag.Parse()
 
 	// use the current context in kubeconfig
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	config, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
 	if err != nil {
 		panic(err.Error())
 	}

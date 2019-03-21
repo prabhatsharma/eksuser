@@ -26,22 +26,26 @@ import (
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete an EKS user. It does not delete the corresponding IAM user.",
-	Long:  `Delete an EKS user. It does not delete the corresponding IAM user.`,
+	Short: "Delete an EKS user or users in an iamgroup. It does not delete the corresponding IAM user.",
+	Long:  `Delete an EKS user or users in an iamgroup. It does not delete the corresponding IAM user.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		// workaround for https://github.com/spf13/viper/issues/233
-		viper.BindPFlag("user", cmd.Flags().Lookup("user"))
+		viper.BindPFlag("iamgroup", cmd.Flags().Lookup("iamgroup"))
+		viper.BindPFlag("user1", cmd.Flags().Lookup("user"))
 
-		user := viper.GetString("user")
+		user := viper.GetString("user1")
+		iamgroup := viper.GetString("iamgroup")
 
-		if user == "" {
-			fmt.Fprintf(os.Stderr, "Error: user not specified\n")
+		if user != "" {
+			del.DeleteUser(user)
+		} else if iamgroup != "" {
+			del.DeleteIAMGroup(iamgroup)
+		} else {
+			fmt.Fprintf(os.Stderr, "Error: --user or --iamgroup value not specified\n")
 			cmd.Usage()
 			os.Exit(1)
 		}
-
-		del.DeleteUser(user)
 	},
 }
 
@@ -49,6 +53,8 @@ func init() {
 	rootCmd.AddCommand(deleteCmd)
 
 	deleteCmd.Flags().StringP("user", "u", "", "IAM user to be deleted from EKS. e.g. prabhat")
+	deleteCmd.Flags().StringP("iamgroup", "i", "", "IAM group to be deleted from EKS. e.g. developers")
 
-	viper.BindPFlag("user", deleteCmd.Flags().Lookup("user"))
+	viper.BindPFlag("user1", deleteCmd.Flags().Lookup("user"))
+	viper.BindPFlag("iamgroup", deleteCmd.Flags().Lookup("iamgroup"))
 }

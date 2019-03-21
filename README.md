@@ -2,7 +2,7 @@
 
 eksuser is a convenience utility that you can use to manage Amazon EKS users.
 
-It allows you to add, update and delete existing IAM users to EKS.
+It allows you to add, update and delete existing IAM users to EKS. It also allows you to add/delete users of an existing IAM group to EKS.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ It allows you to add, update and delete existing IAM users to EKS.
 3. kubectl and aws-iam-authenticator are configured
 4. Existing kubernetes groups that have access
 
-You can create a group you can create a Role/ClusterRole and then create a binding:
+You can create a Role/ClusterRole and then create a binding to the group:
 
 dev-role1.yaml - A Role that gives rights to everything in namespace app1
 
@@ -46,7 +46,7 @@ roleRef:
 ```shell
 $ kubectl apply -f dev-role1.yaml
 ```
-admin-cluster-role1.yaml - A ClusterRole that gives supr privileges on cluster
+admin-cluster-role1.yaml - A ClusterRole that gives super privileges on cluster
 
 ```yaml
 kind: ClusterRole
@@ -86,6 +86,12 @@ $ eksuser add --user=prabhat --group=super-admin
 $ eksuser add --user=prabhat --group=super-admin,super-developer
 ```
 
+To provide an IAM user admin rights on cluster:
+
+```shell
+$ eksuser add --user=prabhat --group=system:masters
+```
+
 To update an existing IAM user to EKS:
 
 ```shell
@@ -99,6 +105,17 @@ $ eksuser delete --user=prabhat
 ```
 Remember that it does not delete the IAM user from AWS IAM, just the IAM user entry from EKS.
 
+To add all users of an AWS IAM group to EKS:
+
+```shell
+$ eksuser add --iamgroup=admin --group=system:masters
+```
+
+To delete all users of an AWS IAM group from EKS:
+
+```shell
+$ eksuser delete --iamgroup=admin
+```
 
 ## Generate kubeconfig file
 

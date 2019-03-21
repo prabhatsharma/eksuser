@@ -13,20 +13,33 @@ import (
 	"github.com/prabhatsharma/eksuser/pkg/utils"
 )
 
+// IamUser is the format of the user return by GetGroups
+type IamUser struct {
+	Arn              string `json:"arn"`
+	CreateDate       string `json:"createddate"`
+	PasswordLastUsed string `json:"passwordlastused"`
+	Path             string `json:"path"`
+	UserID           string `json:"userid"`
+	UserName         string `json:"username"`
+}
+
 // InsertUser adds the user to the EKS. It makes an entry of the user to aws-
-func InsertUser(userName, groups string) {
-
+func InsertUser(userName, kubegroups string) {
 	userArn := getUserARN(userName)
+	insertUserInKube(userName, userArn, kubegroups)
+}
 
+func insertUserInKube(userName, userArn, kubegroups string) {
 	newUser := utils.IamUser{
 		UserArn:  userArn,
 		UserName: userName,
-		Groups:   strings.Split(groups, ","), // get one or more groups that were passed on command line
+		Groups:   strings.Split(kubegroups, ","), // get one or more groups that were passed on command line
 	}
 
 	action.UpdateKubeConfigMap(newUser, "add")
 
 	fmt.Println(userName, " added/updated to EKS.")
+
 }
 
 // getUserARN gets the ARN of the user
@@ -53,4 +66,25 @@ func getUserARN(user string) string {
 	}
 
 	return *result.User.Arn
+}
+
+// InsertIAMGroup adds the users in the IAM group to the EKS in the specified group
+func InsertIAMGroup(iamgroup, kubegroups string) {
+	svc := iam.New(session.New())
+
+	input := &iam.GetGroupInput{
+		GroupName: aws.String(iamgroup),
+	}
+
+	result, err := svc.GetGroup(input)
+	if err != nil {
+		fmt.Println("Error occurred getting IAM Group details")
+	}
+
+	for index, user := range result.Users {
+		fmt.Println(*user.Arn, index)
+		insertUserInKube(*user.UserName, *user.Arn, kubegroups)
+	}
+
+	fmt.Println(iamgroup, " IAM group added/updated to EKS group ", kubegroups)
 }
