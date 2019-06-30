@@ -34,14 +34,15 @@ var updateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		// workaround for https://github.com/spf13/viper/issues/233
-		// viper.BindPFlag("user1", cmd.Flags().Lookup("user"))
-		// viper.BindPFlag("group", cmd.Flags().Lookup("group"))
-		// viper.BindPFlag("iamgroup", updateCmd.Flags().Lookup("iamgroup"))
+		viper.BindPFlag("user1", cmd.Flags().Lookup("user"))
+		viper.BindPFlag("group", cmd.Flags().Lookup("group"))
+		viper.BindPFlag("iamgroup", cmd.Flags().Lookup("iamgroup"))
 
 		user := viper.GetString("user1")
+		iamgroup := viper.GetString("iamgroup")
 
-		if user == "" {
-			fmt.Fprintf(os.Stderr, "Error: user not specified\n")
+		if user == "" || iamgroup == "" {
+			fmt.Fprintf(os.Stderr, "Error: --user or --iamgroup value not specified\n")
 			cmd.Usage()
 			os.Exit(1)
 		}
@@ -52,9 +53,12 @@ var updateCmd = &cobra.Command{
 			fmt.Fprintf(os.Stderr, "Error: group not specified\n")
 			cmd.Usage()
 			os.Exit(1)
-		} else {
+		} else if user != "" {
 			// Add and Update offer same functionality. So just call add in update
-			add.InsertUser(user, group)
+			add.InsertUser(user, "", group)
+		} else if iamgroup != "" {
+			// Add and Update offer same functionality. So just call add in update
+			add.UpdateIAMGroup(iamgroup, group)
 		}
 	},
 }

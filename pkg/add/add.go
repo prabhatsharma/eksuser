@@ -24,19 +24,20 @@ type IamUser struct {
 }
 
 // InsertUser adds the user to the EKS. It makes an entry of the user to aws-
-func InsertUser(userName, kubegroups string) {
+func InsertUser(userName, iamgroup, kubegroups string) {
 	userArn := getUserARN(userName)
-	insertUserInKube(userName, userArn, kubegroups)
+	insertUserInKube(userName, iamgroup, userArn, kubegroups)
 }
 
-func insertUserInKube(userName, userArn, kubegroups string) {
+func insertUserInKube(userName, iamgroup, userArn, kubegroups string) {
 	newUser := utils.IamUser{
 		UserArn:  userArn,
 		UserName: userName,
+		IAMGroup: iamgroup,
 		Groups:   strings.Split(kubegroups, ","), // get one or more groups that were passed on command line
 	}
 
-	action.UpdateKubeConfigMap(newUser, "add")
+	action.UpdateKubeConfigMapUser(newUser, "add")
 
 	fmt.Println(userName, " added/updated to EKS.")
 
@@ -83,8 +84,23 @@ func InsertIAMGroup(iamgroup, kubegroups string) {
 
 	for index, user := range result.Users {
 		fmt.Println(*user.Arn, index)
-		insertUserInKube(*user.UserName, *user.Arn, kubegroups)
+		insertUserInKube(*user.UserName, iamgroup, *user.Arn, kubegroups)
 	}
 
 	fmt.Println(iamgroup, " IAM group added/updated to EKS group ", kubegroups)
+}
+
+// UpdateIAMGroup updates (updates/deletes) users of an IAM group
+func UpdateIAMGroup(iamgroup, kubegroups string) {
+
+	// Remove all group users to begin with.
+
+	// Reinsert all group users.
+	InsertIAMGroup(iamgroup, kubegroups)
+
+}
+
+// removeIAMGroupUsers removes all the IAM users of the particular group from the aws-auth configmap
+func removeIAMGroupUsers(group string) {
+
 }

@@ -12,8 +12,9 @@
             "program": "${fileDirname}",
             "env": {},
             // "args": ["add", "--iamgroup=developer", "--group=something"],
+            "args": ["update", "--iamgroup=developer", "--group=something"],
             // "args": ["delete", "--user=abhinav"]
-            "args": ["delete", "--iamgroup=developer"]
+            // "args": ["delete", "--iamgroup=developer"]
         }
     ]
 }

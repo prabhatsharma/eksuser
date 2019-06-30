@@ -56,7 +56,7 @@ var addCmd = &cobra.Command{
 			os.Exit(1)
 		} else {
 			if user != "" {
-				add.InsertUser(user, group)
+				add.InsertUser(user, "", group)
 			} else if iamgroup != "" {
 				add.InsertIAMGroup(iamgroup, group)
 			}
