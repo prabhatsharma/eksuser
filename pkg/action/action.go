@@ -105,15 +105,15 @@ func DeleteIAMGroupUsers(iamgroup string) {
 		if v.Name == "aws-auth" {
 			allUsers := utils.ConvertUsersStringListToStruct(v.Data["mapUsers"])
 
-			if allUsers.Users
+			// if allUsers.Users
 
 			// Remove existing user from the configmap struct so that we can update and re-insert it
 			allUsers.Users = utils.RemoveGroup(allUsers.Users, iamgroup)
 
 			// add the requested user to the struct
-			if action == "add" {
-				allUsers.Users = append(allUsers.Users, userToActUpon)
-			}
+			// if action == "add" {
+			// 	allUsers.Users = append(allUsers.Users, userToActUpon)
+			// }
 
 			byteAllUsers, _ := yaml.Marshal(allUsers.Users)
 			strAllUsers := string(byteAllUsers)

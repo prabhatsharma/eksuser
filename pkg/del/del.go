@@ -18,7 +18,7 @@ func DeleteUser(userName string) {
 		Groups:   nil,
 	}
 
-	action.UpdateKubeConfigMap(userToDelete, "delete")
+	action.UpdateKubeConfigMapUser(userToDelete, "delete")
 
 	fmt.Println(userName, " deleted from EKS.")
 }

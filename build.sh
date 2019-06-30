@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG=v0.2.0
+TAG=v0.2.1
 
 git tag -a $TAG -m "$TAG release"
 git push origin $TAG
@@ -8,14 +8,17 @@ git push origin $TAG
 mkdir binaries/releases/$TAG
 
 # darwin
+rm -rf binaries/darwin/
 env GOOS=darwin GOARCH=amd64 go build -o binaries/darwin/eksuser
 zip binaries/releases/$TAG/eksuser-darwin-amd64.zip binaries/darwin/eksuser
 
 # linux
+rm -rf binaries/linux/
 env GOOS=linux GOARCH=amd64 go build -o binaries/linux/eksuser
 zip binaries/releases/$TAG/eksuser-linux-amd64.zip binaries/linux/eksuser
 
 # windows
+rm -rf binaries/windows/
 env GOOS=windows GOARCH=amd64 go build -o binaries/windows/eksuser.exe
 zip binaries/releases/$TAG/eksuser-windows-amd64.zip binaries/windows/eksuser.exe
 
